@@ -29,13 +29,26 @@ make init          # or: uv sync
 bookstack auth           # interactive — prompts for URL, token, secret
 ```
 
-Or use env vars (override config file):
+### Config File
+
+Saved to `~/.config/bookstack-cli/config.toml`:
+
+```toml
+[connection]
+url = "https://wiki.example.com"
+token_id = "ltA4dR2k6QhGxY1z"
+token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
+```
+
+### Env Vars (override file)
 
 ```bash
 export BOOKSTACK_URL=https://wiki.example.com
 export BOOKSTACK_TOKEN_ID=ltA4dR2k6QhGxY1z
 export BOOKSTACK_TOKEN_SECRET=AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789
 ```
+
+Precedence: env vars > config file > error.
 
 [See auth docs →](docs/authentication.md)
 
