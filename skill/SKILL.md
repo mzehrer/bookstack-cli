@@ -66,11 +66,13 @@ export BOOKSTACK_TOKEN_SECRET=<token-secret>
 | `bookstack shelves get <id>` | Get shelf by ID |
 | `bookstack shelves create <name>` | Create shelf (`--tags`, `--books`) |
 | `bookstack shelves update <id> <name>` | Update shelf (`--tags`, `--books`) |
+| `bookstack shelves upload-cover <id> --file <path>` | Upload cover image |
 | `bookstack shelves delete <id>` | Delete shelf |
 | `bookstack books list` | List all books |
 | `bookstack books get <id>` | Get book by ID |
 | `bookstack books create <name>` | Create book (`--tags`) |
 | `bookstack books update <id> <name>` | Update book (`--tags`) |
+| `bookstack books upload-cover <id> --file <path>` | Upload cover image |
 | `bookstack books delete <id>` | Delete book |
 | `bookstack chapters list` | List chapters |
 | `bookstack chapters get <id>` | Get chapter by ID |

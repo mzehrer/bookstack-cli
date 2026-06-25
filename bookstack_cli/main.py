@@ -189,6 +189,20 @@ def shelves_delete(id: int = typer.Argument(..., help="Shelf ID")):
         _print({"ok": True, "id": id})
 
 
+@shelves_app.command("upload-cover")
+def shelves_upload_cover(
+    id: int = typer.Argument(..., help="Shelf ID"),
+    file: Path = typer.Option(..., "--file", help="Path to cover image"),
+):
+    """Upload a cover image for a shelf."""
+    file_content = file.read_bytes()
+    with _client() as c:
+        import bookstack_cli.resources.shelves as r
+
+        result = _run(r.upload_shelf_cover(c, id, file_content=file_content, filename=file.name))
+        _print({"ok": True, "shelf_id": id, "image_id": result.get("image_id")})
+
+
 @shelves_app.command("update")
 def shelves_update(
     id: int = typer.Argument(..., help="Shelf ID"),
@@ -265,6 +279,20 @@ def books_delete(id: int = typer.Argument(..., help="Book ID")):
 
         _run(r.delete_book(c, id))
         _print({"ok": True, "id": id})
+
+
+@books_app.command("upload-cover")
+def books_upload_cover(
+    id: int = typer.Argument(..., help="Book ID"),
+    file: Path = typer.Option(..., "--file", help="Path to cover image"),
+):
+    """Upload a cover image for a book."""
+    file_content = file.read_bytes()
+    with _client() as c:
+        import bookstack_cli.resources.books as r
+
+        result = _run(r.upload_book_cover(c, id, file_content=file_content, filename=file.name))
+        _print({"ok": True, "book_id": id, "image_id": result.get("image_id")})
 
 
 @books_app.command("update")

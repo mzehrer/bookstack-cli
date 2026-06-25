@@ -36,3 +36,20 @@ async def update_shelf(client: BookStackClient, shelf_id: int, payload: ShelfCre
 async def delete_shelf(client: BookStackClient, shelf_id: int) -> None:
     """Delete a shelf."""
     await client.delete(f"shelves/{shelf_id}")
+
+
+async def upload_shelf_cover(
+    client: BookStackClient,
+    shelf_id: int,
+    file_content: bytes,
+    filename: str,
+) -> dict[str, Any]:
+    """Upload a cover image for a shelf using multipart PUT."""
+    old_ct = client._client.headers.pop("Content-Type", None)
+    try:
+        files = {"image": (filename, file_content)}
+        resp = await client._client.put(f"/api/shelves/{shelf_id}", files=files)
+        return resp.json()
+    finally:
+        if old_ct is not None:
+            client._client.headers["Content-Type"] = old_ct

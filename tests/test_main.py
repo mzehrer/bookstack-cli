@@ -652,6 +652,45 @@ class TestPagesUpdate:
 
 
 # ------------------------------------------------------------------
+# Cover upload commands
+# ------------------------------------------------------------------
+
+
+class TestBooksUploadCover:
+    @pytest.mark.usefixtures("_setup_env")
+    def test_upload_book_cover(self, httpx_mock, tmp_path):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/books/1",
+            method="PUT",
+            json={"id": 1, "name": "Test", "image_id": 42},
+        )
+        img = tmp_path / "cover.jpg"
+        img.write_bytes(b"fake-image-data")
+        result = runner.invoke(app, ["books", "upload-cover", "1", "--file", str(img)])
+        assert result.exit_code == 0, result.stdout
+        data = json.loads(result.stdout)
+        assert data["ok"] is True
+        assert data["image_id"] == 42
+
+
+class TestShelvesUploadCover:
+    @pytest.mark.usefixtures("_setup_env")
+    def test_upload_shelf_cover(self, httpx_mock, tmp_path):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/shelves/1",
+            method="PUT",
+            json={"id": 1, "name": "Test", "image_id": 99},
+        )
+        img = tmp_path / "cover.png"
+        img.write_bytes(b"png-data")
+        result = runner.invoke(app, ["shelves", "upload-cover", "1", "--file", str(img)])
+        assert result.exit_code == 0, result.stdout
+        data = json.loads(result.stdout)
+        assert data["ok"] is True
+        assert data["image_id"] == 99
+
+
+# ------------------------------------------------------------------
 # Fixtures
 # ------------------------------------------------------------------
 

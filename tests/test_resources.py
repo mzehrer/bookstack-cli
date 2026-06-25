@@ -21,6 +21,35 @@ from bookstack_cli.models import (
     ShelfCreate,
     User,
 )
+
+
+class TestBookCover:
+    async def test_upload_cover(self, client: BookStackClient, httpx_mock):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/books/1",
+            method="PUT",
+            json={"id": 1, "name": "Test", "image_id": 42},
+        )
+        from bookstack_cli.resources.books import upload_book_cover
+
+        result = await upload_book_cover(client, 1, file_content=b"img", filename="cover.jpg")
+        assert result["image_id"] == 42
+
+
+class TestShelfCover:
+    async def test_upload_cover(self, client: BookStackClient, httpx_mock):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/shelves/1",
+            method="PUT",
+            json={"id": 1, "name": "Test", "image_id": 99},
+        )
+        from bookstack_cli.resources.shelves import upload_shelf_cover
+
+        result = await upload_shelf_cover(client, 1, file_content=b"img", filename="cover.png")
+        assert result["image_id"] == 99
+
+
+
 from tests.conftest import (
     SAMPLE_ATTACHMENT,
     SAMPLE_BOOK,

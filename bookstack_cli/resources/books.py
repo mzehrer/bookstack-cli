@@ -45,3 +45,20 @@ async def update_book(client: BookStackClient, book_id: int, payload: BookCreate
 async def delete_book(client: BookStackClient, book_id: int) -> None:
     """Delete a book."""
     await client.delete(f"books/{book_id}")
+
+
+async def upload_book_cover(
+    client: BookStackClient,
+    book_id: int,
+    file_content: bytes,
+    filename: str,
+) -> dict[str, Any]:
+    """Upload a cover image for a book using multipart PUT."""
+    old_ct = client._client.headers.pop("Content-Type", None)
+    try:
+        files = {"image": (filename, file_content)}
+        resp = await client._client.put(f"/api/books/{book_id}", files=files)
+        return resp.json()
+    finally:
+        if old_ct is not None:
+            client._client.headers["Content-Type"] = old_ct
