@@ -4,13 +4,15 @@ Config file: ~/.config/bookstack-cli/config.toml
 
 ```toml
 [connection]
-url = "https://wiki.example.com"
+url = "http://10.11.0.20:8080"            # API endpoint (internal)
+resolve_url = "https://wiki.example.com"  # Public web URL (optional, falls back to url)
 token_id = "ltA4dR2k6QhGxY1z"
 token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
 ```
 
 Env vars override file values:
 - BOOKSTACK_URL
+- BOOKSTACK_RESOLVE_URL
 - BOOKSTACK_TOKEN_ID
 - BOOKSTACK_TOKEN_SECRET
 """
@@ -29,6 +31,7 @@ class BookStackConfig(NamedTuple):
     url: str
     token_id: str
     token_secret: str
+    resolve_url: str | None = None
 
 
 CONFIG_DIR = Path.home() / ".config" / "bookstack-cli"
@@ -41,10 +44,12 @@ def _load_env() -> BookStackConfig | None:
     token_id = os.environ.get("BOOKSTACK_TOKEN_ID")
     token_secret = os.environ.get("BOOKSTACK_TOKEN_SECRET")
     if url and token_id and token_secret:
+        resolve_url = os.environ.get("BOOKSTACK_RESOLVE_URL") or url
         return BookStackConfig(
             url=url.rstrip("/"),
             token_id=token_id,
             token_secret=token_secret,
+            resolve_url=resolve_url.rstrip("/"),
         )
     return None
 
@@ -60,10 +65,12 @@ def _load_toml() -> BookStackConfig | None:
     token_id = conn.get("token_id")
     token_secret = conn.get("token_secret")
     if url and token_id and token_secret:
+        resolve_url = conn.get("resolve_url") or url
         return BookStackConfig(
             url=url.rstrip("/"),
             token_id=token_id,
             token_secret=token_secret,
+            resolve_url=resolve_url.rstrip("/"),
         )
     return None
 
@@ -72,7 +79,8 @@ def get_config() -> BookStackConfig:
     """Load config from env vars (priority) or TOML file.
 
     Precedence:
-    1. BOOKSTACK_URL, BOOKSTACK_TOKEN_ID, BOOKSTACK_TOKEN_SECRET env vars
+    1. BOOKSTACK_URL, BOOKSTACK_RESOLVE_URL, BOOKSTACK_TOKEN_ID,
+       BOOKSTACK_TOKEN_SECRET env vars
     2. ~/.config/bookstack-cli/config.toml
 
     Raises BookStackConfigError if neither source has complete config.
@@ -92,20 +100,24 @@ def get_config() -> BookStackConfig:
     )
 
 
-def save_config(url: str, token_id: str, token_secret: str) -> Path:
+def save_config(url: str, token_id: str, token_secret: str, resolve_url: str | None = None) -> Path:
     """Save connection to ~/.config/bookstack-cli/config.toml.
 
     Creates parent directories if needed.
     Returns the path to the written file.
     """
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    content = (
-        '[connection]\n'
-        f'url = "{_escape_toml(url.rstrip("/"))}"\n'
-        f'token_id = "{_escape_toml(token_id)}"\n'
-        f'token_secret = "{_escape_toml(token_secret)}"\n'
-    )
-    CONFIG_FILE.write_text(content)
+    lines = [
+        '[connection]',
+        f'url = "{_escape_toml(url.rstrip("/"))}"',
+    ]
+    if resolve_url:
+        lines.append(f'resolve_url = "{_escape_toml(resolve_url.rstrip("/"))}"')
+    lines.extend([
+        f'token_id = "{_escape_toml(token_id)}"',
+        f'token_secret = "{_escape_toml(token_secret)}"',
+    ])
+    CONFIG_FILE.write_text("\n".join(lines) + "\n")
     return CONFIG_FILE
 
 

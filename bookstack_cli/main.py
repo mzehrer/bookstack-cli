@@ -115,7 +115,10 @@ def config_show():
     """Show current connection config."""
     try:
         cfg = get_config()
-        _print({"url": cfg.url, "token_id": cfg.token_id})
+        info = {"url": cfg.url, "token_id": cfg.token_id}
+        if cfg.resolve_url and cfg.resolve_url != cfg.url:
+            info["resolve_url"] = cfg.resolve_url
+        _print(info)
     except BookStackError as e:
         _print({"error": str(e)})
         raise typer.Exit(1)
@@ -123,12 +126,14 @@ def config_show():
 
 @app.command("auth")
 def auth_cmd(
-    url: str = typer.Option(..., prompt=True, help="BookStack base URL"),
+    url: str = typer.Option(..., prompt=True, help="BookStack API base URL (internal)"),
     token_id: str = typer.Option(..., prompt=True, help="API token ID"),
     token_secret: str = typer.Option(..., prompt=True, hide_input=True, help="API token secret"),
+    resolve_url: str | None = typer.Option(None, "--resolve-url",
+                                             help="Public web URL (if different from API URL, e.g. behind OAuth proxy)"),
 ):
     """Save connection credentials to ~/.config/bookstack-cli/config.toml."""
-    path = save_config(url, token_id, token_secret)
+    path = save_config(url, token_id, token_secret, resolve_url=resolve_url)
     _print({"ok": True, "message": f"Config saved to {path}"})
 
 
@@ -564,7 +569,7 @@ def pages_resolve_url(
         import bookstack_cli.resources.pages as r
 
         try:
-            page = _run(r.resolve_page_url(c, url, instance_url=cfg.url))
+            page = _run(r.resolve_page_url(c, url, instance_url=cfg.resolve_url))
             _print(page)
         except ValueError as e:
             _print({"error": str(e)})

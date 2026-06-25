@@ -24,12 +24,26 @@ Interactive setup (recommended):
 bookstack auth
 ```
 
-Prompts for URL, token ID, and secret. Saves to `~/.config/bookstack-cli/config.toml`.
+Prompts for URL, token ID, and secret. If the public web URL differs from the
+API URL (e.g. behind an OAuth reverse proxy), provide `--resolve-url`:
+
+```bash
+bookstack auth --resolve-url https://wiki.public.example.com
+```
+
+Saves to `~/.config/bookstack-cli/config.toml`:
+
+```toml
+[connection]
+url = "http://10.0.0.1:8080"              # API endpoint (internal)
+resolve_url = "https://wiki.public.example.com"  # public web URL
+```
 
 Or set env vars (override config file):
 
 ```bash
-export BOOKSTACK_URL=https://wiki.example.com
+export BOOKSTACK_URL=http://10.0.0.1:8080
+export BOOKSTACK_RESOLVE_URL=https://wiki.example.com
 export BOOKSTACK_TOKEN_ID=<token-id>
 export BOOKSTACK_TOKEN_SECRET=<token-secret>
 ```

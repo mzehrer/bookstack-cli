@@ -58,6 +58,19 @@ class TestLoadEnv:
         assert cfg.url == "http://test.local"  # trailing slash stripped
         assert cfg.token_id == "tid123"
         assert cfg.token_secret == "ts456"
+        assert cfg.resolve_url == cfg.url  # falls back to url
+
+    def test_load_env_with_resolve_url(self, monkeypatch):
+        """BOOKSTACK_RESOLVE_URL sets separate resolve_url."""
+        monkeypatch.setenv("BOOKSTACK_URL", "http://10.0.0.1:8080")
+        monkeypatch.setenv("BOOKSTACK_RESOLVE_URL", "https://wiki.public.example.com")
+        monkeypatch.setenv("BOOKSTACK_TOKEN_ID", "tid")
+        monkeypatch.setenv("BOOKSTACK_TOKEN_SECRET", "ts")
+        from bookstack_cli.config import _load_env
+
+        cfg = _load_env()
+        assert cfg.url == "http://10.0.0.1:8080"
+        assert cfg.resolve_url == "https://wiki.public.example.com"
 
 
 class TestLoadToml:
@@ -80,6 +93,24 @@ class TestLoadToml:
         assert cfg.url == "http://toml.local"
         assert cfg.token_id == "tid_toml"
         assert cfg.token_secret == "ts_toml"
+        assert cfg.resolve_url == cfg.url  # falls back to url
+
+    def test_returns_config_with_resolve_url(self, monkeypatch, tmp_path):
+        """TOML resolve_url field is loaded separately."""
+        cfg_file = tmp_path / "config.toml"
+        cfg_file.write_text(
+            '[connection]\n'
+            'url = "http://10.0.0.1:8080"\n'
+            'resolve_url = "https://wiki.public.example.com"\n'
+            'token_id = "tid"\n'
+            'token_secret = "ts"\n'
+        )
+        monkeypatch.setattr("bookstack_cli.config.CONFIG_FILE", cfg_file)
+        from bookstack_cli.config import _load_toml
+
+        cfg = _load_toml()
+        assert cfg.url == "http://10.0.0.1:8080"
+        assert cfg.resolve_url == "https://wiki.public.example.com"
 
     def test_returns_none_when_missing_keys(self, monkeypatch, tmp_path):
         """Partial TOML returns None."""
@@ -150,6 +181,21 @@ class TestSaveConfig:
         assert raw["connection"]["url"] == "http://saved.local"
         assert raw["connection"]["token_id"] == "tid_save"
         assert raw["connection"]["token_secret"] == "ts_save"
+        assert "resolve_url" not in raw["connection"]
+
+    def test_saves_with_resolve_url(self, monkeypatch, tmp_path):
+        """save_config writes resolve_url when provided."""
+        cfg_file = tmp_path / "config.toml"
+        monkeypatch.setattr("bookstack_cli.config.CONFIG_FILE", cfg_file)
+        monkeypatch.setattr("bookstack_cli.config.CONFIG_DIR", cfg_file.parent)
+
+        save_config("http://10.0.0.1:8080", "tid", "ts",
+                    resolve_url="https://wiki.public.example.com")
+        import tomllib
+
+        raw = tomllib.loads(cfg_file.read_text())
+        assert raw["connection"]["url"] == "http://10.0.0.1:8080"
+        assert raw["connection"]["resolve_url"] == "https://wiki.public.example.com"
 
     def test_trailing_slash_stripped(self, monkeypatch, tmp_path):
         cfg_file = tmp_path / "config.toml"

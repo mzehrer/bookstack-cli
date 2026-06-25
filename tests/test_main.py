@@ -46,10 +46,11 @@ class TestConfigShow:
         """auth command saves to config file."""
         saved = {}
 
-        def fake_save(url, token_id, token_secret):
+        def fake_save(url, token_id, token_secret, resolve_url=None):
             saved["url"] = url
             saved["token_id"] = token_id
             saved["token_secret"] = token_secret
+            saved["resolve_url"] = resolve_url
             from pathlib import Path
             return Path("/tmp/fake")
 
@@ -62,6 +63,32 @@ class TestConfigShow:
         assert result.exit_code == 0, result.stdout
         assert saved["url"] == "http://saved.local"
         assert saved["token_id"] == "tid_s"
+        assert saved["resolve_url"] is None
+
+    def test_auth_with_resolve_url(self, monkeypatch):
+        """auth accepts --resolve-url."""
+        saved = {}
+
+        def fake_save(url, token_id, token_secret, resolve_url=None):
+            saved.update(locals())
+            from pathlib import Path
+            return Path("/tmp/fake")
+
+        monkeypatch.setattr("bookstack_cli.main.save_config", fake_save)
+
+        result = runner.invoke(
+            app,
+            [
+                "auth",
+                "--url", "http://10.0.0.1:8080",
+                "--token-id", "tid",
+                "--token-secret", "ts",
+                "--resolve-url", "https://wiki.public.example.com",
+            ],
+        )
+        assert result.exit_code == 0, result.stdout
+        assert saved["url"] == "http://10.0.0.1:8080"
+        assert saved["resolve_url"] == "https://wiki.public.example.com"
 
 
 # ------------------------------------------------------------------

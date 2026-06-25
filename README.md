@@ -27,6 +27,9 @@ make init          # or: uv sync
 
 ```bash
 bookstack auth           # interactive — prompts for URL, token, secret
+
+# If public web URL differs from API (e.g. behind OAuth proxy):
+bookstack auth --resolve-url https://wiki.public.example.com
 ```
 
 ### Config File
@@ -35,15 +38,19 @@ Saved to `~/.config/bookstack-cli/config.toml`:
 
 ```toml
 [connection]
-url = "https://wiki.example.com"
+url = "http://10.0.0.1:8080"                    # API endpoint (internal)
+resolve_url = "https://wiki.public.example.com"  # public web URL (optional)
 token_id = "ltA4dR2k6QhGxY1z"
 token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
 ```
 
+`resolve_url` is optional — defaults to `url` if not set.
+
 ### Env Vars (override file)
 
 ```bash
-export BOOKSTACK_URL=https://wiki.example.com
+export BOOKSTACK_URL=http://10.0.0.1:8080
+export BOOKSTACK_RESOLVE_URL=https://wiki.example.com
 export BOOKSTACK_TOKEN_ID=ltA4dR2k6QhGxY1z
 export BOOKSTACK_TOKEN_SECRET=AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789
 ```

@@ -49,15 +49,23 @@ Config file: `~/.config/bookstack-cli/config.toml`
 
 ```toml
 [connection]
-url = "https://wiki.example.com"
+url = "http://10.0.0.1:8080"                    # API endpoint (internal)
+resolve_url = "https://wiki.public.example.com"  # public web URL (optional)
 token_id = "ltA4dR2k6QhGxY1z"
 token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
 ```
+
+`resolve_url` is optional — defaults to `url` when absent. Use it when your
+BookStack instance is behind an OAuth reverse proxy and the public URL differs
+from the internal API endpoint. The resolve URL is used for web URL resolution
+(`pages resolve-url`) and attachment references.
 
 ### CLI setup (recommended)
 
 ```bash
 bookstack auth
+# If behind an OAuth proxy with different public URL:
+bookstack auth --resolve-url https://wiki.public.example.com
 ```
 
 Prompts for URL, token ID, and secret. Saves to `~/.config/bookstack-cli/config.toml`.
@@ -65,7 +73,8 @@ Prompts for URL, token ID, and secret. Saves to `~/.config/bookstack-cli/config.
 ### Environment variables (override file)
 
 ```bash
-export BOOKSTACK_URL=https://wiki.example.com
+export BOOKSTACK_URL=http://10.0.0.1:8080
+export BOOKSTACK_RESOLVE_URL=https://wiki.example.com
 export BOOKSTACK_TOKEN_ID=ltA4dR2k6QhGxY1z
 export BOOKSTACK_TOKEN_SECRET=AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789
 ```
