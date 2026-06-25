@@ -15,7 +15,10 @@ bookstack test
 ## Install
 
 ```bash
-git clone https://github.com/your-org/bookstack-cli
+# One-liner (no clone needed)
+uv tool install git+https://git.optimal-systems.org/michael/bookstack-cli.git
+
+# Or clone for development
 cd bookstack-cli
 make init          # or: uv sync
 ```
