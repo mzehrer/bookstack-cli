@@ -305,6 +305,48 @@ class TestPagesDelete:
 # ------------------------------------------------------------------
 
 
+class TestPagesMove:
+    @pytest.mark.usefixtures("_setup_env")
+    def test_move_page_to_book(self, httpx_mock):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/pages/1/move",
+            method="PUT",
+            json={
+                "id": 1, "book_id": 5, "chapter_id": None,
+                "name": "Moved", "slug": "moved",
+                "html": "", "markdown": "", "draft": False,
+                "tags": [], "priority": 0,
+                "created_at": None, "updated_at": None,
+                "created_by": None, "updated_by": None,
+            },
+        )
+        result = runner.invoke(app, ["pages", "move", "1", "--book-id", "5"])
+        assert result.exit_code == 0, result.stdout
+        data = json.loads(result.stdout)
+        assert data["book_id"] == 5
+
+    @pytest.mark.usefixtures("_setup_env")
+    def test_move_page_to_chapter(self, httpx_mock):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/pages/1/move",
+            method="PUT",
+            json={
+                "id": 1, "book_id": 5, "chapter_id": 10,
+                "name": "Moved", "slug": "moved",
+                "html": "", "markdown": "", "draft": False,
+                "tags": [], "priority": 0,
+                "created_at": None, "updated_at": None,
+                "created_by": None, "updated_by": None,
+            },
+        )
+        result = runner.invoke(
+            app, ["pages", "move", "1", "--book-id", "5", "--chapter-id", "10"]
+        )
+        assert result.exit_code == 0, result.stdout
+        data = json.loads(result.stdout)
+        assert data["chapter_id"] == 10
+
+
 class TestShelvesList:
     @pytest.mark.usefixtures("_setup_env")
     def test_list_shelves(self, httpx_mock):

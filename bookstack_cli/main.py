@@ -464,6 +464,24 @@ def pages_create(
         _print(_run(r.create_page(c, PageCreate(**kwargs))))
 
 
+@pages_app.command("move")
+def pages_move(
+    id: int = typer.Argument(..., help="Page ID"),
+    book_id: int = typer.Option(..., "--book-id", help="Target book ID"),
+    chapter_id: int | None = typer.Option(None, "--chapter-id", help="Target chapter ID (omit for book root)"),
+):
+    """Move a page to a different book or chapter."""
+    with _client() as c:
+        import bookstack_cli.resources.pages as r
+        from bookstack_cli.models import PageMove
+
+        kwargs: dict[str, Any] = {"book_id": book_id}
+        if chapter_id is not None:
+            kwargs["chapter_id"] = chapter_id
+
+        _print(_run(r.move_page(c, id, PageMove(**kwargs))))
+
+
 @pages_app.command("import")
 def pages_import(
     file: Path = typer.Option(..., "--file", help="Path to markdown file"),
