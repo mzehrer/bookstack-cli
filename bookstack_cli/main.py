@@ -678,6 +678,26 @@ def attachments_delete(id: int = typer.Argument(..., help="Attachment ID")):
         _print({"ok": True, "id": id})
 
 
+@attachments_app.command("download")
+def attachments_download(
+    id: int = typer.Argument(..., help="Attachment ID"),
+    output: Path | None = typer.Option(None, "--output", "-o",
+                                        help="Output file path (default: attachment name in CWD)"),
+):
+    """Download an attachment's file content.
+
+    The BookStack API returns file content as base64 in the attachment response.
+    This command decodes it and writes to disk.
+    """
+    with _client() as c:
+        import bookstack_cli.resources.attachments as r
+
+        filename, content = _run(r.download_attachment(c, id))
+        out_path = output if output else Path(filename)
+        out_path.write_bytes(content)
+        _print({"ok": True, "attachment_id": id, "file": str(out_path.resolve()), "size": len(content)})
+
+
 # ------------------------------------------------------------------
 # User commands
 # ------------------------------------------------------------------

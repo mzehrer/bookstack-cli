@@ -652,6 +652,41 @@ class TestPagesUpdate:
 
 
 # ------------------------------------------------------------------
+# Attachment download
+# ------------------------------------------------------------------
+
+
+class TestAttachmentsDownload:
+    @pytest.mark.usefixtures("_setup_env")
+    def test_download_attachment(self, httpx_mock, tmp_path):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/attachments/100",
+            method="GET",
+            json={
+                "id": 100,
+                "name": "photo",
+                "extension": "jpg",
+                "uploaded_to": 42,
+                "external": False,
+                "order": 1,
+                "created_by": None,
+                "updated_by": None,
+                "created_at": None,
+                "updated_at": None,
+                "content": "/9j/4AAQSkZJRg==",
+            },
+        )
+        out = tmp_path / "output.jpg"
+        result = runner.invoke(app, ["attachments", "download", "100", "--output", str(out)])
+        assert result.exit_code == 0, result.stdout
+        data = json.loads(result.stdout)
+        assert data["ok"] is True
+        assert data["attachment_id"] == 100
+        assert out.exists()
+        assert out.stat().st_size > 0
+
+
+# ------------------------------------------------------------------
 # Cover upload commands
 # ------------------------------------------------------------------
 

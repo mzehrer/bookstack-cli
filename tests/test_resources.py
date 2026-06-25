@@ -370,6 +370,30 @@ class TestAttachments:
         )
         assert a.id == 100
 
+    async def test_download(self, client: BookStackClient, httpx_mock):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/attachments/100",
+            method="GET",
+            json={
+                "id": 100,
+                "name": "photo",
+                "extension": "jpg",
+                "uploaded_to": 42,
+                "external": False,
+                "order": 1,
+                "created_by": None,
+                "updated_by": None,
+                "created_at": None,
+                "updated_at": None,
+                "content": "/9j/4AAQSkZJRg==",
+            },
+        )
+        from bookstack_cli.resources.attachments import download_attachment
+
+        name, content = await download_attachment(client, 100)
+        assert name == "photo.jpg"
+        assert len(content) > 0
+
 
 # ------------------------------------------------------------------
 # Search

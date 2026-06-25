@@ -67,3 +67,24 @@ async def update_attachment(
 async def delete_attachment(client: BookStackClient, attachment_id: int) -> None:
     """Delete an attachment."""
     await client.delete(f"attachments/{attachment_id}")
+
+
+async def download_attachment(
+    client: BookStackClient,
+    attachment_id: int,
+) -> tuple[str, bytes]:
+    """Download an attachment's file content.
+
+    Returns (filename, file_bytes).
+    The API returns file content as base64-encoded string in the ``content`` field.
+    """
+    import base64
+
+    data = await client.get(f"attachments/{attachment_id}")
+    name: str = data.get("name", f"attachment-{attachment_id}")
+    raw_content: str = data.get("content", "")
+    ext: str = data.get("extension", "")
+    if ext and not name.endswith(f".{ext}"):
+        name = f"{name}.{ext}"
+    file_bytes = base64.b64decode(raw_content)
+    return (name, file_bytes)

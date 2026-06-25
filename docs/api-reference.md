@@ -101,6 +101,7 @@ Base: `/api/books`
 | `POST` | `/api/books` | Create book |
 | `PUT` | `/api/books/{id}` | Update book |
 | `DELETE` | `/api/books/{id}` | Delete book |
+| `PUT` | `/api/books/{id}` (multipart) | Upload cover image |
 
 ### POST/PUT Body
 ```json
@@ -112,6 +113,11 @@ Base: `/api/books`
 ```
 
 Cover image: `multipart/form-data` with `image` field.
+
+```bash
+bookstack books upload-cover <id> --file cover.jpg
+bookstack shelves upload-cover <id> --file cover.png
+```
 
 ---
 

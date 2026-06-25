@@ -91,6 +91,7 @@ export BOOKSTACK_TOKEN_SECRET=<token-secret>
 | `bookstack attachments create-link` | Create link attachment (`--name`, `--page-id`, `--link`) |
 | `bookstack attachments upload` | Upload file attachment (`--name`, `--page-id`, `--file`) |
 | `bookstack attachments delete <id>` | Delete attachment |
+| `bookstack attachments download <id>` | Download attachment file (`--output` or defaults to name in CWD) |
 | `bookstack users list` | List users (admin) |
 | `bookstack users get <id>` | Get user by ID |
 | `bookstack roles list` | List roles (admin) |
