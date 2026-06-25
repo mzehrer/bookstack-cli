@@ -159,13 +159,19 @@ def shelves_get(id: int = typer.Argument(..., help="Shelf ID")):
 def shelves_create(
     name: str = typer.Argument(..., help="Shelf name"),
     description: str = "",
+    tags: str | None = typer.Option(None, "--tags", help="JSON array of tags"),
 ):
     """Create a new shelf."""
     with _client() as c:
         import bookstack_cli.resources.shelves as r
         from bookstack_cli.models import ShelfCreate
 
-        _print(_run(r.create_shelf(c, ShelfCreate(name=name, description=description))))
+        kwargs: dict[str, Any] = {"name": name, "description": description}
+        if tags:
+            import json as _json
+            kwargs["tags"] = _json.loads(tags)
+
+        _print(_run(r.create_shelf(c, ShelfCreate(**kwargs))))
 
 
 @shelves_app.command("delete")
@@ -184,6 +190,7 @@ def shelves_update(
     name: str = typer.Argument(..., help="New shelf name"),
     description: str = "",
     books: str | None = typer.Option(None, "--books", help="Comma-separated book IDs to assign to shelf"),
+    tags: str | None = typer.Option(None, "--tags", help="JSON array of tags e.g. '[{\"name\":\"k\",\"value\":\"v\"}]'"),
 ):
     """Update a shelf."""
     with _client() as c:
@@ -193,6 +200,9 @@ def shelves_update(
         kwargs: dict[str, Any] = {"name": name, "description": description}
         if books:
             kwargs["books"] = [int(b.strip()) for b in books.split(",") if b.strip()]
+        if tags:
+            import json as _json
+            kwargs["tags"] = _json.loads(tags)
 
         _print(_run(r.update_shelf(c, id, ShelfCreate(**kwargs))))
 
@@ -227,13 +237,19 @@ def books_get(id: int = typer.Argument(..., help="Book ID")):
 def books_create(
     name: str = typer.Argument(..., help="Book name"),
     description: str = "",
+    tags: str | None = typer.Option(None, "--tags", help="JSON array of tags"),
 ):
     """Create a new book."""
     with _client() as c:
         import bookstack_cli.resources.books as r
         from bookstack_cli.models import BookCreate
 
-        _print(_run(r.create_book(c, BookCreate(name=name, description=description))))
+        kwargs: dict[str, Any] = {"name": name, "description": description}
+        if tags:
+            import json as _json
+            kwargs["tags"] = _json.loads(tags)
+
+        _print(_run(r.create_book(c, BookCreate(**kwargs))))
 
 
 @books_app.command("delete")
@@ -251,13 +267,19 @@ def books_update(
     id: int = typer.Argument(..., help="Book ID"),
     name: str = typer.Argument(..., help="New book name"),
     description: str = "",
+    tags: str | None = typer.Option(None, "--tags", help="JSON array of tags e.g. '[{\"name\":\"k\",\"value\":\"v\"}]'"),
 ):
     """Update a book."""
     with _client() as c:
         import bookstack_cli.resources.books as r
         from bookstack_cli.models import BookCreate
 
-        _print(_run(r.update_book(c, id, BookCreate(name=name, description=description))))
+        kwargs: dict[str, Any] = {"name": name, "description": description}
+        if tags:
+            import json as _json
+            kwargs["tags"] = _json.loads(tags)
+
+        _print(_run(r.update_book(c, id, BookCreate(**kwargs))))
 
 
 # ------------------------------------------------------------------
@@ -288,13 +310,19 @@ def chapters_create(
     book_id: int = typer.Option(..., help="Parent book ID"),
     name: str = typer.Argument(..., help="Chapter name"),
     description: str = "",
+    tags: str | None = typer.Option(None, "--tags", help="JSON array of tags"),
 ):
     """Create a new chapter."""
     with _client() as c:
         import bookstack_cli.resources.chapters as r
         from bookstack_cli.models import ChapterCreate
 
-        _print(_run(r.create_chapter(c, ChapterCreate(book_id=book_id, name=name, description=description))))
+        kwargs: dict[str, Any] = {"book_id": book_id, "name": name, "description": description}
+        if tags:
+            import json as _json
+            kwargs["tags"] = _json.loads(tags)
+
+        _print(_run(r.create_chapter(c, ChapterCreate(**kwargs))))
 
 
 @chapters_app.command("delete")
@@ -313,13 +341,19 @@ def chapters_update(
     name: str = typer.Argument(..., help="New chapter name"),
     description: str = "",
     book_id: int = typer.Option(..., "--book-id", help="Parent book ID"),
+    tags: str | None = typer.Option(None, "--tags", help="JSON array of tags e.g. '[{\"name\":\"k\",\"value\":\"v\"}]'"),
 ):
     """Update a chapter."""
     with _client() as c:
         import bookstack_cli.resources.chapters as r
         from bookstack_cli.models import ChapterCreate
 
-        _print(_run(r.update_chapter(c, id, ChapterCreate(book_id=book_id, name=name, description=description))))
+        kwargs: dict[str, Any] = {"book_id": book_id, "name": name, "description": description}
+        if tags:
+            import json as _json
+            kwargs["tags"] = _json.loads(tags)
+
+        _print(_run(r.update_chapter(c, id, ChapterCreate(**kwargs))))
 
 
 # ------------------------------------------------------------------

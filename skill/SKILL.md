@@ -50,18 +50,18 @@ export BOOKSTACK_TOKEN_SECRET=<token-secret>
 |---------|-------------|
 | `bookstack shelves list` | List all shelves |
 | `bookstack shelves get <id>` | Get shelf by ID |
-| `bookstack shelves create <name>` | Create shelf |
-| `bookstack shelves update <id> <name>` | Update shelf (`--books` to assign book IDs) |
+| `bookstack shelves create <name>` | Create shelf (`--tags`, `--books`) |
+| `bookstack shelves update <id> <name>` | Update shelf (`--tags`, `--books`) |
 | `bookstack shelves delete <id>` | Delete shelf |
 | `bookstack books list` | List all books |
 | `bookstack books get <id>` | Get book by ID |
-| `bookstack books create <name>` | Create book |
-| `bookstack books update <id> <name>` | Update book |
+| `bookstack books create <name>` | Create book (`--tags`) |
+| `bookstack books update <id> <name>` | Update book (`--tags`) |
 | `bookstack books delete <id>` | Delete book |
 | `bookstack chapters list` | List chapters |
 | `bookstack chapters get <id>` | Get chapter by ID |
-| `bookstack chapters create <name>` | Create chapter (`--book-id` required) |
-| `bookstack chapters update <id> <name>` | Update chapter (`--book-id` required) |
+| `bookstack chapters create <name>` | Create chapter (`--book-id`, `--tags`) |
+| `bookstack chapters update <id> <name>` | Update chapter (`--book-id`, `--tags`) |
 | `bookstack chapters delete <id>` | Delete chapter |
 | `bookstack pages list` | List pages (`--drafts`, `--book-id`) |
 | `bookstack pages get <id>` | Get page by ID |
