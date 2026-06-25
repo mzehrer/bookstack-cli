@@ -232,3 +232,110 @@ async def import_markdown_file(
                 f"BookStack serves /attachments/{{id}} as raw files to web session users, "
                 "so images render inline in the page viewer.",
     }
+
+
+async def export_page(
+    client: BookStackClient,
+    page_id: int,
+    output_dir: str | None = None,
+    images_subdir: str = "images",
+) -> dict[str, Any]:
+    """Export a page to a local markdown file, downloading images.
+
+    - Fetches page markdown content
+    - Finds all image references (gallery + attachment URLs)
+    - Downloads each image to a local subfolder
+    - Replaces URLs with local file paths in the markdown
+    - Writes the markdown file
+
+    Returns dict with file path and list of downloaded images.
+    """
+    import base64
+    import os
+    import re
+    from urllib.parse import urlparse
+
+    from bookstack_cli.resources.attachments import download_attachment
+
+    page = await get_page(client, page_id)
+    markdown = page.markdown or ""
+
+    base_dir = output_dir if output_dir else os.path.join(os.getcwd(), f"page-{page_id}")
+    img_dir = os.path.join(base_dir, images_subdir)
+    os.makedirs(img_dir, exist_ok=True)
+
+    # Step 1: Find all image URLs
+    pattern = re.compile(r"!\[([^]]*)\]\(([^)]+)\)")
+    matches = list(pattern.finditer(markdown))
+
+    # Step 2: Download all images
+    url_map: dict[str, str] = {}  # url -> local relative path
+    downloaded: list[dict[str, Any]] = []
+
+    for m in matches:
+        alt_text = m.group(1)
+        url = m.group(2)
+        parsed = urlparse(url)
+        path_part = parsed.path.rstrip("/").split("/")
+        filename = path_part[-1] if path_part else "image"
+        if "." not in filename:
+            filename = f"{filename}.bin"
+        local_path = os.path.join(img_dir, filename)
+        rel_path = os.path.join(images_subdir, filename)
+
+        # Skip already-downloaded URLs
+        if url in url_map:
+            continue
+
+        try:
+            if "/attachments/" in url:
+                # Attachment — download via API (base64)
+                aid_match = re.search(r"/attachments/(\d+)", url)
+                if aid_match:
+                    aid = int(aid_match.group(1))
+                    fname, content = await download_attachment(client, aid)
+                    local_path = os.path.join(img_dir, fname)
+                    rel_path = os.path.join(images_subdir, fname)
+                    with open(local_path, "wb") as f:
+                        f.write(content)
+                    downloaded.append({"url": url, "file": fname, "source": "attachment"})
+            else:
+                # Gallery or external — download via HTTP
+                import httpx
+                h = {"User-Agent": "Mozilla/5.0"}
+                resp = httpx.get(url, headers=h, follow_redirects=True, timeout=30)
+                if resp.status_code == 200 and len(resp.content) > 100:
+                    with open(local_path, "wb") as f:
+                        f.write(resp.content)
+                    downloaded.append({"url": url, "file": filename, "source": "http"})
+
+            url_map[url] = rel_path
+        except Exception as e:
+            downloaded.append({"url": url, "file": None, "error": str(e)})
+
+    # Step 3: Replace URLs in markdown
+    def _replace(m: re.Match) -> str:
+        alt = m.group(1)
+        u = m.group(2)
+        local = url_map.get(u)
+        if local:
+            return f"![{alt}]({local})"
+        return m.group(0)  # keep original on failure
+
+    new_md = pattern.sub(_replace, markdown)
+
+    # Step 4: Write markdown file
+    md_path = os.path.join(base_dir, f"{page.slug or page_id}.md")
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(new_md)
+
+    return {
+        "page_id": page_id,
+        "name": page.name,
+        "slug": page.slug,
+        "markdown_file": md_path,
+        "images_dir": img_dir,
+        "images_downloaded": len([d for d in downloaded if d.get("file")]),
+        "images_failed": len([d for d in downloaded if d.get("error")]),
+        "images": downloaded,
+    }

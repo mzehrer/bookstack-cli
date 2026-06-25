@@ -604,6 +604,25 @@ def pages_resolve_url(
             raise typer.Exit(1)
 
 
+@pages_app.command("export")
+def pages_export(
+    id: int = typer.Argument(..., help="Page ID"),
+    output_dir: str | None = typer.Option(None, "--output", "-o",
+                                           help="Output directory (default: ./page-{id})"),
+):
+    """Export a page to a local markdown file with downloaded images.
+
+    Gallery images are downloaded via HTTP. Attachment images are
+    downloaded via the API (base64 content field). Image URLs in the
+    markdown are replaced with local relative paths.
+    """
+    with _client() as c:
+        import bookstack_cli.resources.pages as r
+
+        result = _run(r.export_page(c, id, output_dir=output_dir))
+        _print(result)
+
+
 # ------------------------------------------------------------------
 # Attachment commands
 # ------------------------------------------------------------------

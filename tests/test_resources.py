@@ -507,6 +507,28 @@ class TestRevisions:
 # ------------------------------------------------------------------
 
 
+class TestPageExport:
+    async def test_export_basic(self, client: BookStackClient, httpx_mock, tmp_path):
+        """Export downloads page markdown with no images."""
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/pages/1",
+            method="GET",
+            json={
+                "id": 1, "book_id": 1, "name": "Test", "slug": "test",
+                "markdown": "# Hello", "html": "<h1>Hello</h1>",
+                "draft": False, "tags": [], "priority": 0,
+                "created_at": None, "updated_at": None,
+                "created_by": None, "updated_by": None,
+            },
+        )
+        from bookstack_cli.resources.pages import export_page
+
+        result = await export_page(client, 1, output_dir=str(tmp_path / "export"))
+        assert result["images_downloaded"] == 0
+        assert result["images_failed"] == 0
+        assert (tmp_path / "export" / "test.md").exists()
+
+
 class TestTags:
     async def test_list(self, client: BookStackClient, httpx_mock):
         httpx_mock.add_response(

@@ -83,6 +83,7 @@ export BOOKSTACK_TOKEN_SECRET=<token-secret>
 | `bookstack pages get <id>` | Get page by ID |
 | `bookstack pages update <id>` | Update page (partial: `--name`, `--markdown`, `--html`, `--tags`, `--markdown-file`, `--append`, `--append-file`, pipe stdin) |
 | `bookstack pages resolve-url <url>` | Resolve web URL to page |
+| `bookstack pages export <id>` | Export page to local markdown file with downloaded images |
 | `bookstack pages create <name>` | Create page (`--book-id`, `--markdown`, `--markdown-file`, or pipe stdin) |
 | `bookstack pages delete <id>` | Delete page |
 | `bookstack pages import` | Import markdown file with image handling (`--file`, `--book-id`, `--page-id`) |
