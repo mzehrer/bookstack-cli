@@ -347,6 +347,38 @@ class TestPagesMove:
         assert data["chapter_id"] == 10
 
 
+class TestPagesCopy:
+    @pytest.mark.usefixtures("_setup_env")
+    def test_copy_page(self, httpx_mock):
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/pages/1",
+            method="GET",
+            json={
+                "id": 1, "book_id": 1, "name": "Original", "slug": "original",
+                "markdown": "# Hello", "html": "", "draft": False,
+                "tags": [{"name": "a", "value": "b"}], "priority": 0,
+                "created_at": None, "updated_at": None,
+                "created_by": None, "updated_by": None,
+            },
+        )
+        httpx_mock.add_response(
+            url="http://test.bookstack.local/api/pages",
+            method="POST",
+            json={
+                "id": 99, "book_id": 5, "name": "Original (copy)", "slug": "original-copy",
+                "markdown": "# Hello", "html": "", "draft": False,
+                "tags": [], "priority": 0,
+                "created_at": None, "updated_at": None,
+                "created_by": None, "updated_by": None,
+            },
+        )
+        result = runner.invoke(app, ["pages", "copy", "1", "--book-id", "5"])
+        assert result.exit_code == 0, result.stdout
+        data = json.loads(result.stdout)
+        assert data["id"] == 99
+        assert data["name"] == "Original (copy)"
+
+
 class TestShelvesList:
     @pytest.mark.usefixtures("_setup_env")
     def test_list_shelves(self, httpx_mock):

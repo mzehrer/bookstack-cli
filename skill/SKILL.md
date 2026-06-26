@@ -86,6 +86,7 @@ export BOOKSTACK_TOKEN_SECRET=<token-secret>
 | `bookstack pages export <id>` | Export page to local markdown file with downloaded images |
 | `bookstack pages create <name>` | Create page (`--book-id`, `--markdown`, `--markdown-file`, or pipe stdin) |
 | `bookstack pages move <id>` | Move page to different book/chapter (`--book-id`, `--chapter-id`) |
+| `bookstack pages copy <id>` | Copy page to different book/chapter (`--book-id`, `--name`) |
 | `bookstack pages delete <id>` | Delete page |
 | `bookstack pages import` | Import markdown file with image handling (`--file`, `--book-id`, `--page-id`) |
 | `bookstack attachments list` | List attachments (`--page-id`) |

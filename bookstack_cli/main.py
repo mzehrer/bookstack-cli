@@ -482,6 +482,24 @@ def pages_move(
         _print(_run(r.move_page(c, id, PageMove(**kwargs))))
 
 
+@pages_app.command("copy")
+def pages_copy(
+    id: int = typer.Argument(..., help="Source page ID"),
+    book_id: int = typer.Option(..., "--book-id", help="Target book ID"),
+    chapter_id: int | None = typer.Option(None, "--chapter-id", help="Target chapter ID (omit for book root)"),
+    name: str | None = typer.Option(None, "--name", help="New page name (default: 'original (copy)')"),
+):
+    """Copy a page to a different book or chapter.
+
+    Creates a new page with the same markdown content and tags in the target
+    location. The original page remains unchanged.
+    """
+    with _client() as c:
+        import bookstack_cli.resources.pages as r
+
+        _print(_run(r.copy_page(c, id, book_id=book_id, chapter_id=chapter_id, new_name=name)))
+
+
 @pages_app.command("import")
 def pages_import(
     file: Path = typer.Option(..., "--file", help="Path to markdown file"),

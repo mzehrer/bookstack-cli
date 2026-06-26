@@ -51,6 +51,30 @@ async def move_page(client: BookStackClient, page_id: int, payload: PageMove) ->
     return Page(**data)
 
 
+async def copy_page(
+    client: BookStackClient,
+    page_id: int,
+    book_id: int,
+    chapter_id: int | None = None,
+    new_name: str | None = None,
+) -> Page:
+    """Copy a page to a different book or chapter.
+
+    Fetches the source page, then creates a new page with the same content
+    in the target location. Appends "(copy)" to the name if not overridden.
+    """
+    source = await get_page(client, page_id)
+    name = new_name or f"{source.name} (copy)"
+    payload = PageCreate(
+        book_id=book_id,
+        chapter_id=chapter_id,
+        name=name,
+        markdown=source.markdown or "",
+        tags=source.tags,
+    )
+    return await create_page(client, payload)
+
+
 async def delete_page(client: BookStackClient, page_id: int) -> None:
     """Delete a page."""
     await client.delete(f"pages/{page_id}")
