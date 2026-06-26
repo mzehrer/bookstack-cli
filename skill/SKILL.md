@@ -12,7 +12,8 @@ Command-line interface to interact with a [BookStack](https://www.bookstackapp.c
 Requires Python 3.14+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-cd /home/michael/Projekte/itop/bookstack-cli
+# From cloned repo:
+cd bookstack-cli
 uv sync
 ```
 
@@ -114,7 +115,7 @@ All responses are JSON printed to stdout. Single entities are JSON objects, list
 
 ```bash
 # Read a page by web URL (resolves slug → ID)
-bookstack pages resolve-url "https://csiwiki.optimal-systems.org/books/test-perm/page/test-perm"
+bookstack pages resolve-url "https://wiki.example.com/books/my-book/page/my-page"
 
 # Read a specific page by ID
 bookstack pages get 42

@@ -1,6 +1,6 @@
 Eine **Sauna** ([Plural](https://de.wikipedia.org/wiki/Plural) *Saunen*/*Saunas*, aus [finnisch](https://de.wikipedia.org/wiki/Finnische_Sprache) *sauna*; auch **Schwitzstube** oder *finnisches Bad* genannt[[1\]](https://de.wikipedia.org/wiki/Sauna#cite_note-1)) ist ein Raum, der mithilfe eines Saunaofens auf 80 bis 105 Grad Celsius erhitzt wird.[[2\]](https://de.wikipedia.org/wiki/Sauna#cite_note-2) Das [Schwitzbad](https://de.wikipedia.org/wiki/Schwitzbad) in der Sauna kann der [Gesundheit](https://de.wikipedia.org/wiki/Gesundheit) und der [Entspannung](https://de.wikipedia.org/wiki/Entspannungsverfahren) dienen.
 
-![](/home/michael/Projekte/itop/bookstack-cli/examples/page-import/250px-Suurupi_ülemise_tuletorni_saun.jpg)
+![](./250px-Suurupi_ülemise_tuletorni_saun.jpg)
 
 Der Saunaraum, der innen meistens mit [Holz](https://de.wikipedia.org/wiki/Holz) ausgekleidet ist, wird mit einem [Ofen](https://de.wikipedia.org/wiki/Ofen) auf eine Luft[temperatur](https://de.wikipedia.org/wiki/Temperatur) zwischen 80 °C und 100 °C, seltener auch bis zu 130 °C erhitzt.
 

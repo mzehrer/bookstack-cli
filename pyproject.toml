@@ -1,16 +1,34 @@
 [project]
 name = "bookstack-cli"
 version = "0.1.0"
-description = "CLI for coding agents to interact with BookStack wiki"
+description = "CLI for coding agents to interact with a BookStack wiki via its REST API"
 readme = "README.md"
 requires-python = ">=3.14"
+license = "MIT"
+authors = [
+    {name = "Michael Zehrer"},
+]
+keywords = ["bookstack", "wiki", "cli", "api", "documentation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Documentation",
+    "Topic :: Utilities",
+]
+
 dependencies = [
     "httpx>=0.28",
     "pydantic>=2.0",
     "typer>=0.15",
     "rich>=13.0",
-    "pyyaml>=6.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/mzehrer/bookstack-cli"
+Source = "https://github.com/mzehrer/bookstack-cli"
+Issues = "https://github.com/mzehrer/bookstack-cli/issues"
 
 [project.scripts]
 bookstack = "bookstack_cli.main:app"
@@ -33,7 +51,7 @@ target-version = "py314"
 [tool.ruff.lint]
 select = ["E", "F", "I", "W"]
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
