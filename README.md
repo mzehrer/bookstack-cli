@@ -18,7 +18,7 @@ bookstack test
 # One-liner (no clone needed)
 uv tool install bookstack-cli          # from PyPI, once published
 # or from source:
-# uv tool install git+https://github.com/your-org/bookstack-cli.git
+# uv tool install git+https://github.com/mzehrer/bookstack-cli.git
 
 # Or clone for development
 cd bookstack-cli

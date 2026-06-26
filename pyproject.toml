@@ -29,6 +29,7 @@ dependencies = [
 Homepage = "https://github.com/mzehrer/bookstack-cli"
 Source = "https://github.com/mzehrer/bookstack-cli"
 Issues = "https://github.com/mzehrer/bookstack-cli/issues"
+Documentation = "https://github.com/mzehrer/bookstack-cli#readme"
 
 [project.scripts]
 bookstack = "bookstack_cli.main:app"
