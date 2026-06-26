@@ -42,8 +42,8 @@ Saved to `~/.config/bookstack-cli/config.toml`:
 [connection]
 url = "http://10.0.0.1:8080"                    # API endpoint (internal)
 resolve_url = "https://wiki.public.example.com"  # public web URL (optional)
-token_id = "ltA4dR2k6QhGxY1z"
-token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
+token_id = "<your-token-id>"
+token_secret = "<your-token-secret>"
 ```
 
 `resolve_url` is optional — defaults to `url` if not set.
@@ -53,8 +53,8 @@ token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
 ```bash
 export BOOKSTACK_URL=http://10.0.0.1:8080
 export BOOKSTACK_RESOLVE_URL=https://wiki.example.com
-export BOOKSTACK_TOKEN_ID=ltA4dR2k6QhGxY1z
-export BOOKSTACK_TOKEN_SECRET=AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789
+export BOOKSTACK_TOKEN_ID=<your-token-id>
+export BOOKSTACK_TOKEN_SECRET=<your-token-secret>
 ```
 
 Precedence: env vars > config file > error.

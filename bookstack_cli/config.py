@@ -6,8 +6,8 @@ Config file: ~/.config/bookstack-cli/config.toml
 [connection]
 url = "http://10.0.0.1:8080"              # API endpoint (internal)
 resolve_url = "https://wiki.example.com"  # Public web URL (optional, falls back to url)
-token_id = "ltA4dR2k6QhGxY1z"
-token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
+token_id = "<your-token-id>"
+token_secret = "<your-token-secret>"
 ```
 
 Env vars override file values:

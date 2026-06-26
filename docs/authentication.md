@@ -11,8 +11,8 @@ Settings → API Tokens → Create
 ```
 
 Token pair consists of:
-- **Token ID** — public identifier (e.g. `ltA4dR2k6QhGxY1z`)
-- **Token Secret** — secret value shown once (e.g. `AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789`)
+- **Token ID** — public identifier (e.g. `a1B2c3D4e5F6g7H8i9J0k`)
+- **Token Secret** — secret value shown once (e.g. `a1B2c3D4e5F6g7H8i9J0kL1m2N3o4P5q6R7s8T9u0V`)
 
 ## Request Header
 
@@ -23,11 +23,8 @@ Authorization: Token <token_id>:<token_secret>
 Example:
 
 ```
-Authorization: Token ltA4dR2k6QhGxY1z:AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789
+Authorization: Token a1B2c3D4e5F6g7H8i9J0k:a1B2c3D4e5F6g7H8i9J0kL1m2N3o4P5q6R7s8T9u0V
 ```
-
-The token is sent as a plaintext colon-separated pair (not Base64-encoded
-Basic auth, though the format resembles it).
 
 ## Permission Model
 
@@ -51,8 +48,8 @@ Config file: `~/.config/bookstack-cli/config.toml`
 [connection]
 url = "http://10.0.0.1:8080"                    # API endpoint (internal)
 resolve_url = "https://wiki.public.example.com"  # public web URL (optional)
-token_id = "ltA4dR2k6QhGxY1z"
-token_secret = "AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789"
+token_id = "<your-token-id>"
+token_secret = "<your-token-secret>"
 ```
 
 `resolve_url` is optional — defaults to `url` when absent. Use it when your
@@ -75,8 +72,8 @@ Prompts for URL, token ID, and secret. Saves to `~/.config/bookstack-cli/config.
 ```bash
 export BOOKSTACK_URL=http://10.0.0.1:8080
 export BOOKSTACK_RESOLVE_URL=https://wiki.example.com
-export BOOKSTACK_TOKEN_ID=ltA4dR2k6QhGxY1z
-export BOOKSTACK_TOKEN_SECRET=AbCdeFgHiJkLmNoPqRsTuVwXyZ0123456789
+export BOOKSTACK_TOKEN_ID=<your-token-id>
+export BOOKSTACK_TOKEN_SECRET=<your-token-secret>
 ```
 
 Env vars take precedence over the config file.
