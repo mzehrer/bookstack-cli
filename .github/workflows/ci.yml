@@ -18,7 +18,7 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: uv sync
+      - run: uv sync --group dev
       - run: uv run pytest -v --tb=short
 
   publish:
@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: "3.14"
       - run: uv sync
-      - run: uv build
+      - run: uv build  # no dev deps needed for build
       - name: Publish to PyPI
         run: uv publish
         env:
